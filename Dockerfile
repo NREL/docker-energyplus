@@ -3,15 +3,15 @@ FROM ubuntu:14.04
 MAINTAINER Nicholas Long nicholas.long@nrel.gov
 
 # This is not ideal. The tarballs are not named nicely and EnergyPlus versioning is strange
-ENV ENERGYPLUS_VERSION 8.2.0
-ENV ENERGYPLUS_TAG v8.2.0-Update-1.2
-ENV ENERGYPLUS_SHA 8397c2e30b
+ENV ENERGYPLUS_VERSION 8.3.0
+ENV ENERGYPLUS_TAG v8.3.0
+ENV ENERGYPLUS_SHA 6d97d074ea
 
-# This should be 8.2.0, but EnergyPlus convention is 8-2-0
-ENV ENERGYPLUS_INSTALL_VERSION 8-2-0
+# This should be 8.3.0, but EnergyPlus convention is 8-3-0
+ENV ENERGYPLUS_INSTALL_VERSION 8-3-0
 
 # Downloading from Github
-# https://github.com/NREL/EnergyPlus/releases/download/v8.2.0-Update-1.2/EnergyPlus-8.2.0-8397c2e30b-Linux-x86_64.sh
+# https://github.com/NREL/EnergyPlus/releases/download/v8.3.0/EnergyPlus-8.3.0-6d97d074ea-Linux-x86_64.sh
 ENV ENERGYPLUS_DOWNLOAD_BASE_URL https://github.com/NREL/EnergyPlus/releases/download/$ENERGYPLUS_TAG
 ENV ENERGYPLUS_DOWNLOAD_FILENAME EnergyPlus-$ENERGYPLUS_VERSION-$ENERGYPLUS_SHA-Linux-x86_64.sh
 ENV ENERGYPLUS_DOWNLOAD_URL $ENERGYPLUS_DOWNLOAD_BASE_URL/$ENERGYPLUS_DOWNLOAD_FILENAME
@@ -32,9 +32,10 @@ RUN curl -SLO $ENERGYPLUS_DOWNLOAD_URL \
     PostProcess/EP-Compare PreProcess/FMUParser PreProcess/ParametricPreProcessor PreProcess/IDFVersionUpdater
 
 # Remove the broken symlinks
-RUN cd /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION \
+RUN cd /usr/local/bin \
 		&& find -L . -type l -delete
 
 RUN mkdir -p /var/simdata
+WORKDIR /var/simdata
 
 CMD [ "/bin/bash" ]
