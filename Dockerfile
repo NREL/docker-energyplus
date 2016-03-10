@@ -39,7 +39,7 @@ ADD test /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/test_run
 RUN cp /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/Energy+.idd \
         /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/test_run/
 
-RUN mkdir -p /var/simdata
+VOLUME /var/simdata
 WORKDIR /var/simdata
 
 CMD [ "/bin/bash" ]
