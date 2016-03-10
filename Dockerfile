@@ -16,24 +16,28 @@ ENV ENERGYPLUS_DOWNLOAD_BASE_URL https://github.com/NREL/EnergyPlus/releases/dow
 ENV ENERGYPLUS_DOWNLOAD_FILENAME EnergyPlus-$ENERGYPLUS_VERSION-$ENERGYPLUS_SHA-Linux-x86_64.sh
 ENV ENERGYPLUS_DOWNLOAD_URL $ENERGYPLUS_DOWNLOAD_BASE_URL/$ENERGYPLUS_DOWNLOAD_FILENAME
 
-# Update packages
-RUN apt-get update && apt-get install -y \
-		ca-certificates curl \
-		&& rm -rf /var/lib/apt/lists/*
 
-# Collapse the download and installation into one command to make the container smaller &
-# Remove a bunch of the auxiliary apps/files that are not needed in the container
-RUN curl -SLO $ENERGYPLUS_DOWNLOAD_URL \
+# Collapse the update of packages, download and installation into one command
+# to make the container smaller & remove a bunch of the auxiliary apps/files
+# that are not needed in the container
+RUN apt-get update && apt-get install -y ca-certificates curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -SLO $ENERGYPLUS_DOWNLOAD_URL \
     && chmod +x $ENERGYPLUS_DOWNLOAD_FILENAME \
     && echo "y\r" | ./$ENERGYPLUS_DOWNLOAD_FILENAME \
-		&& rm $ENERGYPLUS_DOWNLOAD_FILENAME \
-		&& cd /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION \
+    && rm $ENERGYPLUS_DOWNLOAD_FILENAME \
+    && cd /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION \
     && rm -rf DataSets Documentation ExampleFiles WeatherData MacroDataSets PostProcess/convertESOMTRpgm \
     PostProcess/EP-Compare PreProcess/FMUParser PreProcess/ParametricPreProcessor PreProcess/IDFVersionUpdater
 
 # Remove the broken symlinks
 RUN cd /usr/local/bin \
-		&& find -L . -type l -delete
+    && find -L . -type l -delete
+
+# Add in the test files
+ADD test /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/test_run
+RUN cp /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/Energy+.idd \
+        /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/test_run/
 
 RUN mkdir -p /var/simdata
 WORKDIR /var/simdata
