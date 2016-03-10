@@ -3,15 +3,15 @@ FROM ubuntu:14.04
 MAINTAINER Nicholas Long nicholas.long@nrel.gov
 
 # This is not ideal. The tarballs are not named nicely and EnergyPlus versioning is strange
-ENV ENERGYPLUS_VERSION 8.3.0
-ENV ENERGYPLUS_TAG v8.3.0
-ENV ENERGYPLUS_SHA 6d97d074ea
+ENV ENERGYPLUS_VERSION 8.4.0
+ENV ENERGYPLUS_TAG v8.4.0
+ENV ENERGYPLUS_SHA 832e4bb9cb
 
-# This should be 8.3.0, but EnergyPlus convention is 8-3-0
-ENV ENERGYPLUS_INSTALL_VERSION 8-3-0
+# This should be x.y.z, but EnergyPlus convention is x-y-z
+ENV ENERGYPLUS_INSTALL_VERSION 8-4-0
 
 # Downloading from Github
-# https://github.com/NREL/EnergyPlus/releases/download/v8.3.0/EnergyPlus-8.3.0-6d97d074ea-Linux-x86_64.sh
+# e.g. https://github.com/NREL/EnergyPlus/releases/download/v8.3.0/EnergyPlus-8.3.0-6d97d074ea-Linux-x86_64.sh
 ENV ENERGYPLUS_DOWNLOAD_BASE_URL https://github.com/NREL/EnergyPlus/releases/download/$ENERGYPLUS_TAG
 ENV ENERGYPLUS_DOWNLOAD_FILENAME EnergyPlus-$ENERGYPLUS_VERSION-$ENERGYPLUS_SHA-Linux-x86_64.sh
 ENV ENERGYPLUS_DOWNLOAD_URL $ENERGYPLUS_DOWNLOAD_BASE_URL/$ENERGYPLUS_DOWNLOAD_FILENAME
