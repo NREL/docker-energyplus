@@ -1,5 +1,6 @@
 .idea
 test/*
 !test/in.*
-
+test/in.idfnew
+test/in.idfold
 
