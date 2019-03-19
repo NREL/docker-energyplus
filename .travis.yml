@@ -5,9 +5,9 @@ install:
   - echo "Nothing to install"
 env:
   global:
-    - ENERGYPLUS_VERSION: 8.5.0
-    - ENERGYPLUS_SHA: c87e61b44b
-    - ENERGYPLUS_INSTALL_VERSION: 8-5-0
+    - ENERGYPLUS_VERSION: 8.6.0
+    - ENERGYPLUS_SHA: 198c6a3cff
+    - ENERGYPLUS_INSTALL_VERSION: 8-6-0
 jobs:
   include:
     - stage: test and build
