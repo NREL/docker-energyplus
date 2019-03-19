@@ -5,7 +5,7 @@ if [ "${TRAVIS_BRANCH}" == "develop" ]; then
     IMAGETAG=develop
 elif [ "${TRAVIS_BRANCH}" == "master" ]; then
     # Retrieve the version number from package.json
-    IMAGETAG=$( EnergyPlus --version | grep -Po '\d.\d.\d' )
+    IMAGETAG=$( docker run -it energyplus:latest /bin/bash -c "EnergyPlus --version | grep -Po '\d{1,2}\.\d{1,2}\.\d{1,2}'" )
     OUT=$?
     if [ $OUT -eq 0 ]; then
         IMAGETAG=$( echo $IMAGETAG | tr -d '\r' )
