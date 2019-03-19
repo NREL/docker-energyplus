@@ -1,0 +1,21 @@
+language: python
+services:
+  - docker
+install:
+  - echo "Nothing to install"
+env:
+  global:
+    - ENERGYPLUS_VERSION: 8.5.0
+    - ENERGYPLUS_SHA: c87e61b44b
+    - ENERGYPLUS_INSTALL_VERSION: 8-5-0
+jobs:
+  include:
+    - stage: test and build
+      sudo: required
+      script:
+        - docker build -t energyplus:latest --build-arg ENERGYPLUS_VERSION=$ENERGYPLUS_VERSION --build-arg ENERGYPLUS_SHA=$ENERGYPLUS_SHA --build-arg ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION .
+        - docker run -it energyplus:latest EnergyPlus --version
+        # Run model via ruby script using system gems
+        - docker run -it --rm -v $(pwd)/test:/var/simdata/energyplus energyplus:latest /bin/bash -c "cp /usr/local/bin/Energy+.idd /var/simdata/energyplus; cd /var/simdata/energyplus && EnergyPlus"
+      after_success:
+        - ./deploy_docker.sh
