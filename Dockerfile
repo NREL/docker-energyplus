@@ -24,7 +24,7 @@ ENV ENERGYPLUS_DOWNLOAD_URL $ENERGYPLUS_DOWNLOAD_BASE_URL/$ENERGYPLUS_DOWNLOAD_F
 # Collapse the update of packages, download and installation into one command
 # to make the container smaller & remove a bunch of the auxiliary apps/files
 # that are not needed in the container
-RUN apt-get update && apt-get install -y ca-certificates curl \
+RUN apt-get update && apt-get install -y ca-certificates curl libx11-6\
     && rm -rf /var/lib/apt/lists/* \
     && curl -SLO $ENERGYPLUS_DOWNLOAD_URL \
     && chmod +x $ENERGYPLUS_DOWNLOAD_FILENAME \
@@ -43,7 +43,7 @@ ADD test /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/test_run
 RUN cp /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/Energy+.idd \
         /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/test_run/
 
-VOLUME /var/simdata
-WORKDIR /var/simdata
+VOLUME /var/simdata/energyplus
+WORKDIR /var/simdata/energyplus
 
 CMD [ "/bin/bash" ]
