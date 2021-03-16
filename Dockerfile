@@ -20,14 +20,13 @@ ENV ENERGYPLUS_DOWNLOAD_BASE_URL https://github.com/NREL/EnergyPlus/releases/dow
 ENV ENERGYPLUS_DOWNLOAD_FILENAME EnergyPlus-$ENERGYPLUS_VERSION-$ENERGYPLUS_SHA-Linux-x86_64.sh
 ENV ENERGYPLUS_DOWNLOAD_URL $ENERGYPLUS_DOWNLOAD_BASE_URL/$ENERGYPLUS_DOWNLOAD_FILENAME
 
-
-# Collapse the update of packages, download and installation into one command
-# to make the container smaller & remove a bunch of the auxiliary apps/files
-# that are not needed in the container
+# Download
 RUN apt-get update && apt-get install -y ca-certificates curl libx11-6 libexpat1\
     && rm -rf /var/lib/apt/lists/* \
-    && curl -SLO $ENERGYPLUS_DOWNLOAD_URL \
-    && chmod +x $ENERGYPLUS_DOWNLOAD_FILENAME \
+    && curl -SLO $ENERGYPLUS_DOWNLOAD_URL
+
+# Install
+RUN chmod +x $ENERGYPLUS_DOWNLOAD_FILENAME \
     && echo "y\r" | ./$ENERGYPLUS_DOWNLOAD_FILENAME \
     && rm $ENERGYPLUS_DOWNLOAD_FILENAME \
     && cd /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION \
@@ -42,6 +41,16 @@ RUN cd /usr/local/bin \
 ADD test /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/test_run
 RUN cp /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/Energy+.idd \
         /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/test_run/
+
+# Use Multi-stage build to produce a smaller final image
+FROM debian:buster-slim AS runtime
+
+ARG ENERGYPLUS_INSTALL_VERSION
+ENV ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION
+
+COPY --from=base /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/ \
+        /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/
+COPY --from=base /usr/local/bin /usr/local/bin
 
 VOLUME /var/simdata/energyplus
 WORKDIR /var/simdata/energyplus
