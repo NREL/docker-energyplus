@@ -43,7 +43,7 @@ RUN cp /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/Energy+.idd \
         /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/test_run/
 
 # Use Multi-stage build to produce a smaller final image
-FROM debian:buster-slim AS runtime
+FROM ubuntu:18.04 AS runtime
 
 ARG ENERGYPLUS_INSTALL_VERSION
 ENV ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION
@@ -51,6 +51,8 @@ ENV ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION
 COPY --from=base /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/ \
         /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/
 COPY --from=base /usr/local/bin /usr/local/bin
+COPY --from=base /usr/lib/x86_64-linux-gnu/ /usr/lib/x86_64-linux-gnu/
+COPY --from=base /lib/x86_64-linux-gnu/ /lib/x86_64-linux-gnu/
 
 VOLUME /var/simdata/energyplus
 WORKDIR /var/simdata/energyplus
