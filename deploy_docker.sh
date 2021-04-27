@@ -4,8 +4,8 @@ IMAGETAG=skip
 if [ "${TRAVIS_BRANCH}" == "develop" ]; then
     IMAGETAG=develop
 elif [ "${TRAVIS_BRANCH}" == "main" ]; then
-    # Retrieve the version number from package.json
-    IMAGETAG=$( docker run -it energyplus:latest /bin/bash -c "EnergyPlus --version | grep -Po '\d{1,2}\.\d{1,2}\.\d{1,2}'" )
+    # Retrieve the version number from package.json - 9.5.0 has date with decimal separator, so grab first line withhead -n1
+    IMAGETAG=$( docker run -it energyplus:latest /bin/bash -c "EnergyPlus --version | grep -Po '\d{1,2}\.\d{1,2}\.\d{1,2}'" | head -n1 )
     OUT=$?
     if [ $OUT -eq 0 ]; then
         IMAGETAG=$( echo $IMAGETAG | tr -d '\r' )
