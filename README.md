@@ -20,7 +20,7 @@ Below is a table of the various docker tags and their meanings as seen on [this 
 To build the EnergyPlus docker image locally, see the following example command for v9.3.0.
 
 ```
-docker build --target base -t energyplus --build-arg ENERGYPLUS_VERSION=9.3.0 --build-arg ENERGYPLUS_TAG=v9.3.0 --build-arg ENERGYPLUS_SHA=baff08990c --build-arg ENERGYPLUS_INSTALL_VERSION=9-3-0 .
+docker build --target base -t energyplus --build-arg ENERGYPLUS_VERSION=9.4.0 --build-arg ENERGYPLUS_TAG=v9.4.0 --build-arg ENERGYPLUS_SHA=998c4b761e --build-arg ENERGYPLUS_INSTALL_VERSION=9-4-0 .
 ```
 
 ## Example

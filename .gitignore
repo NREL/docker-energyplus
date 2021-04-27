@@ -1,4 +1,5 @@
 .idea
+.python-version
 test/*
 !test/in.*
 test/in.idfnew
