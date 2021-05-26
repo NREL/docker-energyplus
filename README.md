@@ -1,6 +1,6 @@
 # EnergyPlus Docker Container
 
-[![Build Status](https://travis-ci.org/NREL/docker-energyplus.svg?branch=master)](https://travis-ci.org/NREL/docker-energyplus)
+[![Build Status](https://travis-ci.org/NREL/docker-energyplus.svg?branch=main)](https://travis-ci.org/NREL/docker-energyplus)
 
 This project has multiple versions of EnergyPlus ready for use in a single container.
 
@@ -17,10 +17,10 @@ Below is a table of the various docker tags and their meanings as seen on [this 
 
 ## Building EnergyPlus Container
 
-To build the EnergyPlus docker image locally, see the following example command for v9.3.0.
+To build the EnergyPlus docker image locally, see the following example command for v9.5.0.
 
 ```
-docker build --target base -t energyplus --build-arg ENERGYPLUS_VERSION=9.3.0 --build-arg ENERGYPLUS_TAG=v9.3.0 --build-arg ENERGYPLUS_SHA=baff08990c --build-arg ENERGYPLUS_INSTALL_VERSION=9-3-0 .
+docker build --target base -t energyplus --build-arg ENERGYPLUS_VERSION=9.5.0 --build-arg ENERGYPLUS_TAG=v9.5.0 --build-arg ENERGYPLUS_SHA=de239b2e5f --build-arg ENERGYPLUS_INSTALL_VERSION=9-5-0 .
 ```
 
 ## Example
