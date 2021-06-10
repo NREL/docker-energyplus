@@ -1,8 +1,14 @@
+# Keep ARG outside of build images so can access globally
+# This is not ideal. The tarballs are not named nicely and EnergyPlus versioning is strange
+ARG ENERGYPLUS_VERSION
+ARG ENERGYPLUS_TAG
+ARG ENERGYPLUS_SHA
+ARG ENERGYPLUS_INSTALL_VERSION
+
 FROM ubuntu:18.04 AS base
 
 MAINTAINER Nicholas Long nicholas.long@nrel.gov
 
-# This is not ideal. The tarballs are not named nicely and EnergyPlus versioning is strange
 ARG ENERGYPLUS_VERSION
 ARG ENERGYPLUS_TAG
 ARG ENERGYPLUS_SHA
@@ -17,44 +23,50 @@ ENV ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION
 # Downloading from Github
 # e.g. https://github.com/NREL/EnergyPlus/releases/download/v8.3.0/EnergyPlus-8.3.0-6d97d074ea-Linux-x86_64.sh
 ENV ENERGYPLUS_DOWNLOAD_BASE_URL https://github.com/NREL/EnergyPlus/releases/download/$ENERGYPLUS_TAG
-ENV ENERGYPLUS_DOWNLOAD_FILENAME EnergyPlus-$ENERGYPLUS_VERSION-$ENERGYPLUS_SHA-Linux-Ubuntu18.04-x86_64.sh
+ENV ENERGYPLUS_DOWNLOAD_BASENAME EnergyPlus-$ENERGYPLUS_VERSION-$ENERGYPLUS_SHA-Linux-Ubuntu18.04-x86_64
+ENV ENERGYPLUS_DOWNLOAD_FILENAME $ENERGYPLUS_DOWNLOAD_BASENAME.tar.gz
 ENV ENERGYPLUS_DOWNLOAD_URL $ENERGYPLUS_DOWNLOAD_BASE_URL/$ENERGYPLUS_DOWNLOAD_FILENAME
 
+ENV SIMDATA_DIR=/var/simdata
+
 # Download
-RUN apt-get update && apt-get install -y ca-certificates curl libx11-6 libexpat1\
-    && rm -rf /var/lib/apt/lists/* \
+RUN apt-get update \
+    && apt-get install -y ca-certificates curl libx11-6 libexpat1 \
     && curl -SLO $ENERGYPLUS_DOWNLOAD_URL
 
-# Install
-RUN chmod +x $ENERGYPLUS_DOWNLOAD_FILENAME \
-    && echo "y\r" | ./$ENERGYPLUS_DOWNLOAD_FILENAME \
-    && rm $ENERGYPLUS_DOWNLOAD_FILENAME \
-    && cd /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION \
-    && rm -rf DataSets Documentation ExampleFiles WeatherData MacroDataSets PostProcess/convertESOMTRpgm \
+# Unzip
+RUN tar -zxvf $ENERGYPLUS_DOWNLOAD_FILENAME \
+    && cd $ENERGYPLUS_DOWNLOAD_BASENAME \
+    && chmod +x energyplus \
+    && ln -s energyplus EnergyPlus
+
+RUN mkdir -p  $SIMDATA_DIR/energyplus \
+    && cp ExampleFiles/1ZoneUncontrolled.idf $SIMDATA_DIR \
+    && cp ExampleFiles/PythonPluginCustomOutputVariable.idf $SIMDATA_DIR \
+    && cp ExampleFiles/PythonPluginCustomOutputVariable.py $SIMDATA_DIR 
+
+# Remove datasets to slim down the EnergyPlus folder
+RUN rm -rf DataSets Documentation ExampleFiles WeatherData MacroDataSets PostProcess/convertESOMTRpgm \
     PostProcess/EP-Compare PreProcess/FMUParser PreProcess/ParametricPreProcessor PreProcess/IDFVersionUpdater
-
-# Remove the broken symlinks
-RUN cd /usr/local/bin \
-    && find -L . -type l -delete
-
-# Add in the test files
-ADD test /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/test_run
-RUN cp /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/Energy+.idd \
-        /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/test_run/
 
 # Use Multi-stage build to produce a smaller final image
 FROM ubuntu:18.04 AS runtime
 
-ARG ENERGYPLUS_INSTALL_VERSION
-ENV ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION
+ARG ENERGYPLUS_VERSION
+ARG ENERGYPLUS_SHA
+ENV ENERGYPLUS_VERSION=$ENERGYPLUS_VERSION
+ENV ENERGYPLUS_SHA=$ENERGYPLUS_SHA
+ENV ENERGYPLUS_DOWNLOAD_BASENAME EnergyPlus-$ENERGYPLUS_VERSION-$ENERGYPLUS_SHA-Linux-Ubuntu18.04-x86_64
+ENV SIMDATA_DIR=/var/simdata
 
-COPY --from=base /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/ \
-        /usr/local/EnergyPlus-$ENERGYPLUS_INSTALL_VERSION/
-COPY --from=base /usr/local/bin /usr/local/bin
+COPY --from=base $ENERGYPLUS_DOWNLOAD_BASENAME $ENERGYPLUS_DOWNLOAD_BASENAME
+COPY --from=base $SIMDATA_DIR $SIMDATA_DIR
+
+# Copy shared libraries libX11.so.6 & libexpat.so.1 required to run energyplus
 COPY --from=base /usr/lib/x86_64-linux-gnu/ /usr/lib/x86_64-linux-gnu/
 COPY --from=base /lib/x86_64-linux-gnu/ /lib/x86_64-linux-gnu/
 
-VOLUME /var/simdata/energyplus
-WORKDIR /var/simdata/energyplus
+# Add energyplus to PATH so can run "energyplus" in any directory
+ENV PATH="/${ENERGYPLUS_DOWNLOAD_BASENAME}:${PATH}"
 
 CMD [ "/bin/bash" ]
