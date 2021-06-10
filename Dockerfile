@@ -65,8 +65,18 @@ COPY --from=base $ENERGYPLUS_DOWNLOAD_BASENAME $ENERGYPLUS_DOWNLOAD_BASENAME
 COPY --from=base $SIMDATA_DIR $SIMDATA_DIR
 
 # Copy shared libraries libX11.so.6 & libexpat.so.1 required to run energyplus
-COPY --from=base /usr/lib/x86_64-linux-gnu/ /usr/lib/x86_64-linux-gnu/
-COPY --from=base /lib/x86_64-linux-gnu/ /lib/x86_64-linux-gnu/
+COPY --from=base \
+    /usr/lib/x86_64-linux-gnu/libX11.so.1* \
+    /usr/lib/x86_64-linux-gnu/libX11.so.6* \
+    /usr/lib/x86_64-linux-gnu/libxcb.so.1* \
+    /usr/lib/x86_64-linux-gnu/libXau.so.6* \
+    /usr/lib/x86_64-linux-gnu/libXau.so.6* \
+    /usr/lib/x86_64-linux-gnu/libXdmcp.so.6* \
+    /usr/lib/x86_64-linux-gnu
+COPY --from=base \
+    /lib/x86_64-linux-gnu/libbsd.so.0* \
+    /lib/x86_64-linux-gnu/libexpat.so.1* \
+    /lib/x86_64-linux-gnu/
 
 # Add energyplus to PATH so can run "energyplus" in any directory
 ENV PATH="/${ENERGYPLUS_DOWNLOAD_BASENAME}:${PATH}"
