@@ -41,12 +41,14 @@ RUN tar -zxvf $ENERGYPLUS_DOWNLOAD_FILENAME \
     && ln -s energyplus EnergyPlus
 
 RUN mkdir -p  $SIMDATA_DIR/energyplus \
+    && cd $ENERGYPLUS_DOWNLOAD_BASENAME \
     && cp ExampleFiles/1ZoneUncontrolled.idf $SIMDATA_DIR \
     && cp ExampleFiles/PythonPluginCustomOutputVariable.idf $SIMDATA_DIR \
     && cp ExampleFiles/PythonPluginCustomOutputVariable.py $SIMDATA_DIR 
 
 # Remove datasets to slim down the EnergyPlus folder
-RUN rm -rf DataSets Documentation ExampleFiles WeatherData MacroDataSets PostProcess/convertESOMTRpgm \
+RUN cd $ENERGYPLUS_DOWNLOAD_BASENAME \
+    && rm -rf DataSets Documentation ExampleFiles WeatherData MacroDataSets PostProcess/convertESOMTRpgm \
     PostProcess/EP-Compare PreProcess/FMUParser PreProcess/ParametricPreProcessor PreProcess/IDFVersionUpdater
 
 # Use Multi-stage build to produce a smaller final image
