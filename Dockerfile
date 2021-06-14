@@ -64,7 +64,7 @@ ENV SIMDATA_DIR=/var/simdata
 COPY --from=base $ENERGYPLUS_DOWNLOAD_BASENAME $ENERGYPLUS_DOWNLOAD_BASENAME
 COPY --from=base $SIMDATA_DIR $SIMDATA_DIR
 
-# Copy shared libraries libX11.so.6 & libexpat.so.1 required to run energyplus
+# Copy shared libraries required to run energyplus
 COPY --from=base \
     /usr/lib/x86_64-linux-gnu/libX11.so.1* \
     /usr/lib/x86_64-linux-gnu/libX11.so.6* \
