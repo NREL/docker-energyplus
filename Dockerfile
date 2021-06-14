@@ -72,7 +72,7 @@ COPY --from=base \
     /usr/lib/x86_64-linux-gnu/libXau.so.6* \
     /usr/lib/x86_64-linux-gnu/libXau.so.6* \
     /usr/lib/x86_64-linux-gnu/libXdmcp.so.6* \
-    /usr/lib/x86_64-linux-gnu
+    /usr/lib/x86_64-linux-gnu/
 COPY --from=base \
     /lib/x86_64-linux-gnu/libbsd.so.0* \
     /lib/x86_64-linux-gnu/libexpat.so.1* \
