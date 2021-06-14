@@ -1,7 +1,6 @@
 # Keep ARG outside of build images so can access globally
 # This is not ideal. The tarballs are not named nicely and EnergyPlus versioning is strange
 ARG ENERGYPLUS_VERSION
-ARG ENERGYPLUS_TAG
 ARG ENERGYPLUS_SHA
 ARG ENERGYPLUS_INSTALL_VERSION
 
@@ -10,7 +9,6 @@ FROM ubuntu:18.04 AS base
 MAINTAINER Nicholas Long nicholas.long@nrel.gov
 
 ARG ENERGYPLUS_VERSION
-ARG ENERGYPLUS_TAG
 ARG ENERGYPLUS_SHA
 ARG ENERGYPLUS_INSTALL_VERSION
 ENV ENERGYPLUS_VERSION=$ENERGYPLUS_VERSION
