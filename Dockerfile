@@ -52,10 +52,6 @@ RUN rm ${ENERGYPLUS_DOWNLOAD_BASENAME}.tar.gz \
     && rm -rf DataSets Documentation ExampleFiles WeatherData MacroDataSets PostProcess/convertESOMTRpgm \
     PostProcess/EP-Compare PreProcess/FMUParser PreProcess/ParametricPreProcessor PreProcess/IDFVersionUpdater
 
-# Add energyplus to PATH so can run "energyplus" in any directory
-ENV PATH="/${ENERGYPLUS_DOWNLOAD_BASENAME}:${PATH}"
-CMD [ "/bin/bash" ]
-
 # Use Multi-stage build to produce a smaller final image
 FROM ubuntu:18.04 AS runtime
 
@@ -82,3 +78,7 @@ COPY --from=base \
     /lib/x86_64-linux-gnu/libbsd.so.0* \
     /lib/x86_64-linux-gnu/libexpat.so.1* \
     /lib/x86_64-linux-gnu/
+
+# Add energyplus to PATH so can run "energyplus" in any directory
+ENV PATH="/${ENERGYPLUS_DOWNLOAD_BASENAME}:${PATH}"
+CMD [ "/bin/bash" ]
