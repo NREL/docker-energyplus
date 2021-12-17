@@ -23,7 +23,8 @@ jobs:
           docker build -t energyplus:latest \
           --build-arg ENERGYPLUS_VERSION=$ENERGYPLUS_VERSION \
           --build-arg ENERGYPLUS_SHA=$ENERGYPLUS_SHA \
-          --build-arg ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION .
+          --build-arg ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION \
+          --build-arg ENERGYPLUS_TAG=$ENERGYPLUS_TAG .
           docker run energyplus:latest EnergyPlus --version
           # Run some tests including Python EMS
           docker run energyplus:latest /bin/bash -c "cd /var/simdata/energyplus && EnergyPlus -D ../1ZoneUncontrolled.idf"
