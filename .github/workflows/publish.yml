@@ -3,35 +3,37 @@ name: publish
 on: [push, pull_request]
 
 env:
-  ENERGYPLUS_VERSION: 9.5.0
-  ENERGYPLUS_SHA: de239b2e5f
-  ENERGYPLUS_INSTALL_VERSION: 9-5-0
-  
+  ENERGYPLUS_VERSION: 9.6.0
+  ENERGYPLUS_SHA: 4b123cf80f
+  ENERGYPLUS_INSTALL_VERSION: 9-6-0
+  ENERGYPLUS_TAG: v9.6.0_PlusSpaceFix1
+
 jobs:
   docker:
     runs-on: ubuntu-18.04
-    steps: 
+    steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
         python-version: '3.8.x'
 
     - name: test and build
-      shell: bash 
+      shell: bash
       run: |
           docker build -t energyplus:latest \
           --build-arg ENERGYPLUS_VERSION=$ENERGYPLUS_VERSION \
           --build-arg ENERGYPLUS_SHA=$ENERGYPLUS_SHA \
-          --build-arg ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION .
+          --build-arg ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION \
+          --build-arg ENERGYPLUS_TAG=$ENERGYPLUS_TAG .
           docker run energyplus:latest EnergyPlus --version
           # Run some tests including Python EMS
           docker run energyplus:latest /bin/bash -c "cd /var/simdata/energyplus && EnergyPlus -D ../1ZoneUncontrolled.idf"
           docker run energyplus:latest /bin/bash -c "cd /var/simdata/energyplus && EnergyPlus -D ../PythonPluginCustomOutputVariable.idf"
     - name: deploy docker
-      if: ${{ success() }} &&  
+      if: ${{ success() }} &&
          github.ref == 'refs/heads/main' ||
          github.ref == 'refs/heads/develop'
-      shell: bash 
+      shell: bash
       run: ./deploy_docker.sh
       env:
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}

@@ -3,6 +3,7 @@
 ARG ENERGYPLUS_VERSION
 ARG ENERGYPLUS_SHA
 ARG ENERGYPLUS_INSTALL_VERSION
+ARG ENERGYPLUS_TAG
 
 FROM ubuntu:18.04 AS base
 
@@ -11,8 +12,9 @@ MAINTAINER Nicholas Long nicholas.long@nrel.gov
 ARG ENERGYPLUS_VERSION
 ARG ENERGYPLUS_SHA
 ARG ENERGYPLUS_INSTALL_VERSION
+ARG ENERGYPLUS_TAG
 ENV ENERGYPLUS_VERSION=$ENERGYPLUS_VERSION
-ENV ENERGYPLUS_TAG=v$ENERGYPLUS_VERSION
+ENV ENERGYPLUS_TAG=$ENERGYPLUS_TAG
 ENV ENERGYPLUS_SHA=$ENERGYPLUS_SHA
 
 # This should be x.y.z, but EnergyPlus convention is x-y-z
@@ -29,7 +31,7 @@ ENV SIMDATA_DIR=/var/simdata
 
 # Download
 RUN apt-get update \
-    && apt-get install -y ca-certificates curl libx11-6 libexpat1 \
+    && apt-get install -y ca-certificates curl libx11-6 libexpat1 python3 python3-pip \
     && curl -SLO $ENERGYPLUS_DOWNLOAD_URL
 
 # Unzip
@@ -42,10 +44,11 @@ RUN mkdir -p  $SIMDATA_DIR/energyplus \
     && cd $ENERGYPLUS_DOWNLOAD_BASENAME \
     && cp ExampleFiles/1ZoneUncontrolled.idf $SIMDATA_DIR \
     && cp ExampleFiles/PythonPluginCustomOutputVariable.idf $SIMDATA_DIR \
-    && cp ExampleFiles/PythonPluginCustomOutputVariable.py $SIMDATA_DIR 
+    && cp ExampleFiles/PythonPluginCustomOutputVariable.py $SIMDATA_DIR
 
 # Remove datasets to slim down the EnergyPlus folder
-RUN cd $ENERGYPLUS_DOWNLOAD_BASENAME \
+RUN rm ${ENERGYPLUS_DOWNLOAD_BASENAME}.tar.gz \
+    && cd $ENERGYPLUS_DOWNLOAD_BASENAME \
     && rm -rf DataSets Documentation ExampleFiles WeatherData MacroDataSets PostProcess/convertESOMTRpgm \
     PostProcess/EP-Compare PreProcess/FMUParser PreProcess/ParametricPreProcessor PreProcess/IDFVersionUpdater
 
@@ -70,6 +73,7 @@ COPY --from=base \
     /usr/lib/x86_64-linux-gnu/libXau.so.6* \
     /usr/lib/x86_64-linux-gnu/libXau.so.6* \
     /usr/lib/x86_64-linux-gnu/libXdmcp.so.6* \
+    /usr/lib/x86_64-linux-gnu/libgomp.so.1* \
     /usr/lib/x86_64-linux-gnu/
 COPY --from=base \
     /lib/x86_64-linux-gnu/libbsd.so.0* \
@@ -78,5 +82,4 @@ COPY --from=base \
 
 # Add energyplus to PATH so can run "energyplus" in any directory
 ENV PATH="/${ENERGYPLUS_DOWNLOAD_BASENAME}:${PATH}"
-
 CMD [ "/bin/bash" ]
