@@ -1,6 +1,9 @@
 name: publish
 
-on: [push, pull_request]
+# Only run this on push since that is when 
+# the containers should be built and pushed 
+# to docker hub.
+on: [push]
 
 env:
   ENERGYPLUS_VERSION: 9.6.0
