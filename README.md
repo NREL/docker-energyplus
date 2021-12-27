@@ -1,6 +1,7 @@
 # EnergyPlus Docker Container
 
-[![Build Status](https://travis-ci.org/NREL/docker-energyplus.svg?branch=main)](https://travis-ci.org/NREL/docker-energyplus)
+![Build Status](https://github.com/nrel/docker-energyplus/actions/workflows/publish.yml/badge.svg?branch=main)
+
 
 This project has multiple versions of EnergyPlus ready for use in a single container.
 
