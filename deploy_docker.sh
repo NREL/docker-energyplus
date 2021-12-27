@@ -19,7 +19,7 @@ fi
 if [ "${IMAGETAG}" != "skip" ]; then
     echo "Tagging image as $IMAGETAG"
 
-    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+    echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
     docker tag energyplus:latest nrel/energyplus:$IMAGETAG; (( exit_status = exit_status || $? ))
     docker tag energyplus:latest nrel/energyplus:latest; (( exit_status = exit_status || $? ))
     docker push nrel/energyplus:$IMAGETAG; (( exit_status = exit_status || $? ))
@@ -35,3 +35,4 @@ else
 fi
 
 # Deploy the singularity image
+# ... hmm, do we need to add this back in here?
