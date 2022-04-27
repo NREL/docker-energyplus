@@ -56,8 +56,21 @@ RUN rm ${ENERGYPLUS_DOWNLOAD_BASENAME}.tar.gz \
     && rm -rf DataSets Documentation ExampleFiles WeatherData MacroDataSets PostProcess/convertESOMTRpgm \
     PostProcess/EP-Compare PreProcess/FMUParser PreProcess/ParametricPreProcessor PreProcess/IDFVersionUpdater
 
+# Conditional copy depending on UBUNTU_BASE
+FROM ubuntu:18.04 as build_18.04
+ONBUILD COPY --from=base \
+    /lib/x86_64-linux-gnu/libbsd.so* \
+    /lib/x86_64-linux-gnu/libexpat.so* \
+    /lib/x86_64-linux-gnu/
+
+FROM ubuntu:20.04 as build_20.04
+ONBUILD COPY --from=base \
+    /usr/lib/x86_64-linux-gnu/libbsd.so* \
+    /usr/lib/x86_64-linux-gnu/libexpat.so* \
+    /usr/lib/x86_64-linux-gnu/
+
 # Use Multi-stage build to produce a smaller final image
-FROM ubuntu:$UBUNTU_BASE AS runtime
+FROM build_${UBUNTU_BASE} AS runtime
 
 ARG ENERGYPLUS_VERSION
 ARG ENERGYPLUS_SHA
@@ -79,10 +92,6 @@ COPY --from=base \
     /usr/lib/x86_64-linux-gnu/libXdmcp.so* \
     /usr/lib/x86_64-linux-gnu/libgomp.so* \
     /usr/lib/x86_64-linux-gnu/
-COPY --from=base \
-    /lib/x86_64-linux-gnu/libbsd.so* \
-    /lib/x86_64-linux-gnu/libexpat.so* \
-    /lib/x86_64-linux-gnu/
 
 # Add energyplus to PATH so can run "energyplus" in any directory
 ENV PATH="/${ENERGYPLUS_DOWNLOAD_BASENAME}:${PATH}"
