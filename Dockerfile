@@ -4,7 +4,7 @@ ARG ENERGYPLUS_VERSION
 ARG ENERGYPLUS_SHA
 ARG ENERGYPLUS_INSTALL_VERSION
 ARG ENERGYPLUS_TAG
-ARG UBUNTU_BASE=18.04
+ARG UBUNTU_BASE=20.04
 
 FROM ubuntu:$UBUNTU_BASE AS base
 
@@ -19,6 +19,7 @@ ARG UBUNTU_BASE
 ENV ENERGYPLUS_VERSION=$ENERGYPLUS_VERSION
 ENV ENERGYPLUS_TAG=$ENERGYPLUS_TAG
 ENV ENERGYPLUS_SHA=$ENERGYPLUS_SHA
+ENV UBUNTU_BASE=$UBUNTU_BASE
 
 # This should be x.y.z, but EnergyPlus convention is x-y-z
 ENV ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION
@@ -34,7 +35,7 @@ ENV SIMDATA_DIR=/var/simdata
 
 # Download
 RUN apt-get update \
-    && apt-get install -y ca-certificates curl libx11-6 libexpat1 python3 python3-pip \
+    && apt-get install -y ca-certificates curl libx11-6 libexpat1 python3 python3-pip $(["$UBUNTU_BASE" = "22.04"] && echo -n "libmd0") \
     && rm -rf /var/lib/apt/lists/* \
     && curl -SLO $ENERGYPLUS_DOWNLOAD_URL
 
@@ -67,6 +68,13 @@ FROM ubuntu:20.04 as build_20.04
 ONBUILD COPY --from=base \
     /usr/lib/x86_64-linux-gnu/libbsd.so* \
     /usr/lib/x86_64-linux-gnu/libexpat.so* \
+    /usr/lib/x86_64-linux-gnu/
+
+FROM ubuntu:22.04 as build_22.04
+ONBUILD COPY --from=base \
+    /usr/lib/x86_64-linux-gnu/libbsd.so* \
+    /usr/lib/x86_64-linux-gnu/libexpat.so* \
+    /usr/lib/x86_64-linux-gnu/libmd.so* \
     /usr/lib/x86_64-linux-gnu/
 
 # Use Multi-stage build to produce a smaller final image

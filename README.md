@@ -13,15 +13,15 @@ Below is a table of the various docker tags and their meanings as seen on [this 
 | Tag     | Description                                                                         |
 |---------|-------------------------------------------------------------------------------------|
 | x.y.z   | Build of official EnergyPlus release (recommended use)                              |
-| latest  | Latest official release of EnergyPlus (e.g. 22.1.0)                                 |
+| latest  | Latest official release of EnergyPlus (e.g. 22.2.0)                                 |
 | develop | Release of [develop branch](https://github.com/NREL/docker-energyplus/tree/develop) |
 
 ## Building EnergyPlus Container
 
-To build the EnergyPlus docker image locally, see the following example command for v22.1.0 using Ubuntu 20.04 as the base image.
+To build the EnergyPlus docker image locally, see the following example command for v22.2.0 using Ubuntu 22.04 as the base image.
 
 ```
-docker build -t energyplus --build-arg ENERGYPLUS_VERSION=22.1.0 --build-arg ENERGYPLUS_SHA=ed759b17ee --build-arg ENERGYPLUS_INSTALL_VERSION=22-1-0 --build-arg ENERGYPLUS_TAG=v22.1.0 --build-arg UBUNTU_BASE=20.04 .
+docker build -t energyplus --build-arg ENERGYPLUS_VERSION=22.2.0 --build-arg ENERGYPLUS_SHA=c249759bad --build-arg ENERGYPLUS_INSTALL_VERSION=22-2-0 --build-arg ENERGYPLUS_TAG=v22.2.0 --build-arg UBUNTU_BASE=22.04 .
 ```
 
 ## Example

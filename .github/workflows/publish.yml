@@ -1,15 +1,15 @@
 name: publish
 
-# Only run this on push since that is when 
-# the containers should be built and pushed 
+# Only run this on push since that is when
+# the containers should be built and pushed
 # to docker hub.
 on: [push]
 
 env:
-  ENERGYPLUS_VERSION: 22.1.0
-  ENERGYPLUS_SHA: ed759b17ee
-  ENERGYPLUS_INSTALL_VERSION: 22-1-0
-  ENERGYPLUS_TAG: v22.1.0
+  ENERGYPLUS_VERSION: 22.2.0
+  ENERGYPLUS_SHA: c249759bad
+  ENERGYPLUS_INSTALL_VERSION: 22-2-0
+  ENERGYPLUS_TAG: v22.2.0
 
 jobs:
   docker:
