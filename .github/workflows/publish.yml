@@ -33,9 +33,7 @@ jobs:
           docker run energyplus:latest /bin/bash -c "cd /var/simdata/energyplus && EnergyPlus -D ../1ZoneUncontrolled.idf"
           docker run energyplus:latest /bin/bash -c "cd /var/simdata/energyplus && EnergyPlus -D ../PythonPluginCustomOutputVariable.idf"
     - name: deploy docker
-      if: ${{ success() }} &&
-         github.ref == 'refs/heads/main' ||
-         github.ref == 'refs/heads/develop'
+      if: ${{ success() }}
       shell: bash
       run: ./deploy_docker.sh
       env:
