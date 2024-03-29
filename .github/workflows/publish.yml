@@ -6,19 +6,16 @@ name: publish
 on: [ push ]
 
 env:
-  ENERGYPLUS_VERSION: 23.2.0
-  ENERGYPLUS_SHA: 7636e6b3e9
-  ENERGYPLUS_INSTALL_VERSION: 23-2-0
-  ENERGYPLUS_TAG: v23.2.0
+  ENERGYPLUS_VERSION: 24.1.0
+  ENERGYPLUS_SHA: 9d7789a3ac
+  ENERGYPLUS_INSTALL_VERSION: 24-1-0
+  ENERGYPLUS_TAG: v24.1.0
 
 jobs:
   docker:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.8.x'
+      - uses: actions/checkout@v4
 
       - name: test and build
         shell: bash
