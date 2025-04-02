@@ -6,14 +6,15 @@ name: publish
 on: [ push ]
 
 env:
-  ENERGYPLUS_VERSION: 24.1.0
-  ENERGYPLUS_SHA: 9d7789a3ac
-  ENERGYPLUS_INSTALL_VERSION: 24-1-0
-  ENERGYPLUS_TAG: v24.1.0
+  ENERGYPLUS_VERSION: 24.2.0
+  ENERGYPLUS_SHA: 94a887817b
+  ENERGYPLUS_INSTALL_VERSION: 24-2-0
+  ENERGYPLUS_TAG: v24.2.0a
+  UBUNTU_BASE: 22.04
 
 jobs:
   docker:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
@@ -24,7 +25,8 @@ jobs:
           --build-arg ENERGYPLUS_VERSION=$ENERGYPLUS_VERSION \
           --build-arg ENERGYPLUS_SHA=$ENERGYPLUS_SHA \
           --build-arg ENERGYPLUS_INSTALL_VERSION=$ENERGYPLUS_INSTALL_VERSION \
-          --build-arg ENERGYPLUS_TAG=$ENERGYPLUS_TAG .
+          --build-arg ENERGYPLUS_TAG=$ENERGYPLUS_TAG \
+          --build-arg UBUNTU_BASE=$UBUNTU_BASE .
           docker run energyplus:latest EnergyPlus --version
           # Run some tests including Python EMS
           docker run energyplus:latest /bin/bash -c "cd /var/simdata/energyplus && EnergyPlus -D ../1ZoneUncontrolled.idf"
